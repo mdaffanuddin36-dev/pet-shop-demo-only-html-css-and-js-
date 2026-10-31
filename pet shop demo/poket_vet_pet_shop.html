@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POKET VET & PET SHOP</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandGold: '#c6a237',
+                        brandNavy: '#1a222e',
+                        brandPurple: '#7c3aed',
+                        brandPurpleHover: '#6d28d9',
+                        bgSoft: '#eef2f7',
+                        cardBg: '#ffffff'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #eef2f7;
+            color: #334155;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col pb-12">
+
+    <!-- TOP GOLDEN BAR HEADER -->
+    <header class="bg-brandGold text-slate-900 px-4 md:px-8 py-2.5 flex flex-wrap justify-between items-center shadow-sm">
+        <!-- Logo -->
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="resetFilters()">
+            <div class="bg-amber-900 text-brandGold rounded-full p-2.5 w-11 h-11 flex items-center justify-center shadow">
+                <i class="fa-solid fa-paw text-xl"></i>
+            </div>
+            <div>
+                <h1 class="font-black text-xl tracking-wider uppercase leading-none text-slate-900">Poket Vet</h1>
+                <span class="text-xs font-bold tracking-widest text-slate-800 uppercase block -mt-0.5">& PET SHOP</span>
+            </div>
+        </div>
+
+        <!-- Right Action Buttons -->
+        <div class="flex items-center space-x-4 mt-2 sm:mt-0 text-sm font-semibold text-slate-900">
+            <button onclick="openModal('loginModal')" class="flex items-center space-x-1.5 hover:text-white transition">
+                <i class="fa-solid fa-right-to-bracket text-base"></i>
+                <span>Login</span>
+            </button>
+            <button onclick="openModal('registerModal')" class="flex items-center space-x-1.5 hover:text-white transition">
+                <i class="fa-solid fa-user-plus text-base"></i>
+                <span>Register</span>
+            </button>
+            <button onclick="openModal('adminModal')" class="flex items-center space-x-1.5 hover:text-white transition bg-amber-900/10 px-2.5 py-1 rounded-md">
+                <i class="fa-solid fa-circle-plus text-base"></i>
+                <span>Admin Panel</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN NAV & SEARCH BAR -->
+    <nav class="bg-brandNavy text-white px-4 md:px-8 py-3 flex flex-col md:flex-row justify-between items-center gap-4 shadow-md">
+        <!-- Nav Links -->
+        <div class="flex flex-wrap items-center space-x-1 md:space-x-6 text-sm font-medium">
+            <button onclick="setActiveNav('home')" id="nav-home" class="flex items-center space-x-2 bg-amber-900/40 text-amber-300 px-3 py-1.5 rounded-md font-semibold transition">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </button>
+            <button onclick="setActiveNav('shop')" id="nav-shop" class="flex items-center space-x-2 text-slate-300 hover:text-white px-3 py-1.5 rounded-md transition">
+                <i class="fa-solid fa-store"></i>
+                <span>Shop</span>
+            </button>
+            <button onclick="setActiveNav('services')" id="nav-services" class="flex items-center space-x-2 text-slate-300 hover:text-white px-3 py-1.5 rounded-md transition">
+                <i class="fa-solid fa-hand-holding-heart"></i>
+                <span>Services</span>
+            </button>
+            <button onclick="setActiveNav('veterinary')" id="nav-veterinary" class="flex items-center space-x-2 text-slate-300 hover:text-white px-3 py-1.5 rounded-md transition">
+                <i class="fa-solid fa-user-doctor"></i>
+                <span>Veterinary</span>
+            </button>
+            <button onclick="setActiveNav('about')" id="nav-about" class="flex items-center space-x-2 text-slate-300 hover:text-white px-3 py-1.5 rounded-md transition">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>About us</span>
+            </button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="relative w-full md:w-80">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </span>
+            <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Search for cats, dogs, food, services..." class="w-full pl-9 pr-4 py-1.5 bg-slate-100 text-slate-800 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-brandPurple shadow-inner">
+        </div>
+    </nav>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-7xl w-full mx-auto px-4 md:px-6 pt-6">
+        
+        <!-- SHOP / PRODUCTS SECTION CONTAINER -->
+        <div id="shopView">
+            <!-- CATEGORY BADGES GRID (TOP SECTION CONTAINER) -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 mb-8">
+                <div id="categoryGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 mb-3">
+                    <!-- Categories populated by JS -->
+                </div>
+                <div id="categoryGridRow2" class="grid grid-cols-2 sm:grid-cols-4 max-w-2xl mx-auto gap-3">
+                    <!-- Row 2 Categories populated by JS -->
+                </div>
+            </div>
+
+            <!-- CONTENT HEADER & SUB-FILTERS -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight" id="sectionTitle">All Categories</h2>
+                    <p class="text-slate-500 text-sm mt-0.5" id="sectionSubtitle">Browse our services, veterinary care, and pet shop essentials.</p>
+                </div>
+
+                <!-- Tab Toggle -->
+                <div class="bg-white p-1 rounded-xl border border-slate-200 inline-flex shadow-sm self-start md:self-auto">
+                    <button onclick="setSubFilter('all')" id="sub-all" class="px-4 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition bg-brandPurple text-white">All Items</button>
+                    <button onclick="setSubFilter('service')" id="sub-service" class="px-4 py-1.5 text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 rounded-lg transition">Services & Vet</button>
+                    <button onclick="setSubFilter('product')" id="sub-product" class="px-4 py-1.5 text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 rounded-lg transition">Products & Food</button>
+                </div>
+            </div>
+
+            <!-- ITEMS GRID -->
+            <div id="itemsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Cards rendered dynamically via JavaScript -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-16 bg-white rounded-2xl shadow-sm border border-slate-200">
+                <i class="fa-solid fa-box-open text-5xl text-slate-300 mb-3"></i>
+                <h3 class="text-lg font-bold text-slate-700">No items found</h3>
+                <p class="text-slate-500 text-sm">Try matching your search or filters to something else.</p>
+                <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-brandPurple text-white text-sm font-semibold rounded-lg shadow">Reset All Filters</button>
+            </div>
+        </div>
+
+        <!-- ABOUT ME / HELP FOR PET OWNERS SECTION -->
+        <div id="aboutView" class="hidden space-y-8">
+            <!-- Banner Header -->
+            <div class="bg-gradient-to-r from-brandNavy to-purple-900 text-white rounded-3xl p-8 md:p-12 shadow-md relative overflow-hidden">
+                <div class="relative z-10 max-w-2xl">
+                    <span class="bg-brandGold text-slate-950 font-bold text-xs uppercase px-3 py-1 rounded-full mb-3 inline-block">About Poket Vet & Pet Shop</span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold mb-4">Dedicated to the Health, Happiness & Wellbeing of Your Pets</h2>
+                    <p class="text-slate-300 text-sm md:text-base leading-relaxed mb-6">We bridge the gap between pet care, expert veterinary guidance, and high-quality nutrition. Whether you need urgent health consultation, certified breeding advice, or premium pet supplies, Poket Vet is your all-in-one companion.</p>
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="setActiveNav('veterinary')" class="bg-brandPurple hover:bg-brandPurpleHover text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow transition flex items-center space-x-2">
+                            <i class="fa-solid fa-user-doctor"></i>
+                            <span>Explore Veterinary Services</span>
+                        </button>
+                        <button onclick="openModal('registerModal')" class="bg-white text-slate-900 hover:bg-slate-100 px-5 py-2.5 rounded-xl font-bold text-sm shadow transition">Join Our Community</button>
+                    </div>
+                </div>
+                <i class="fa-solid fa-heart-pulse absolute -bottom-10 -right-10 text-[240px] opacity-10 text-white"></i>
+            </div>
+
+            <!-- Core Services & Owner Support Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center text-xl mb-4 font-bold">
+                        <i class="fa-solid fa-kit-medical"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2">24/7 Veterinary Guidance</h3>
+                    <p class="text-slate-600 text-sm">Access top-tier veterinary care, vaccinations, health checkups, and diagnostic consultations for your furry and feathered family members.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center text-xl mb-4 font-bold">
+                        <i class="fa-solid fa-bowl-food"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2">Nutritional Planning</h3>
+                    <p class="text-slate-600 text-sm">Custom dietary recommendations tailored to your pet's breed, age, and weight. From high-protein dog food to specialized bird seed mixes.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="w-12 h-12 bg-purple-100 text-brandPurple rounded-xl flex items-center justify-center text-xl mb-4 font-bold">
+                        <i class="fa-solid fa-house-chimney-medical"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2">Shelter & Care Housing</h3>
+                    <p class="text-slate-600 text-sm">Safe, climate-controlled boarding and daycare options whenever you are away. Daily grooming sessions and social play activities included.</p>
+                </div>
+            </div>
+
+            <!-- Pet Owner FAQs -->
+            <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
+                <h3 class="text-xl font-extrabold text-slate-800 mb-6 flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-question text-brandPurple"></i>
+                    <span>Frequently Asked Questions for Pet Owners</span>
+                </h3>
+                <div class="space-y-4">
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200/80">
+                        <h4 class="font-bold text-slate-800 text-sm mb-1">How do I schedule a veterinary checkup or grooming session?</h4>
+                        <p class="text-xs text-slate-600">Navigate to the Services or Veterinary tab on the top menu, select your preferred service, and click "Book Now" to reserve a time slot through your basket.</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200/80">
+                        <h4 class="font-bold text-slate-800 text-sm mb-1">What pet foods are best for sensitive stomachs?</h4>
+                        <p class="text-xs text-slate-600">We offer specialized nutrition like Royal Canin and Me-O adult formulated feeds. Consult our vet team via the Admin or Consultation panel for specific recommendations.</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200/80">
+                        <h4 class="font-bold text-slate-800 text-sm mb-1">Are all animals listed health-certified?</h4>
+                        <p class="text-xs text-slate-600">Yes, all pets and breeds available under breeding or adopt/shop categories are fully vaccinated, dewormed, and health-checked by certified veterinarians.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="mt-16 bg-brandNavy text-slate-300 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="bg-brandGold text-amber-950 rounded-full p-2 w-10 h-10 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-paw"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-lg text-white tracking-wider uppercase leading-none">Poket Vet</h3>
+                        <span class="text-[10px] font-bold tracking-widest text-brandGold uppercase block">& PET SHOP</span>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-400 leading-relaxed mb-4">Your trusted partner for all pet essentials, veterinary appointments, specialized nutrition, and animal welfare services.</p>
+                <div class="flex space-x-3">
+                    <a href="#" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-brandPurple flex items-center justify-center text-xs text-white transition"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-brandPurple flex items-center justify-center text-xs text-white transition"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-brandPurple flex items-center justify-center text-xs text-white transition"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-brandPurple flex items-center justify-center text-xs text-white transition"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="font-bold text-white text-sm uppercase tracking-wider mb-4 border-b border-slate-800 pb-2">Quick Navigation</h4>
+                <ul class="space-y-2 text-xs font-medium">
+                    <li><button onclick="setActiveNav('home')" class="hover:text-amber-400 transition">Home Catalog</button></li>
+                    <li><button onclick="setActiveNav('shop')" class="hover:text-amber-400 transition">Pet Shop & Food</button></li>
+                    <li><button onclick="setActiveNav('services')" class="hover:text-amber-400 transition">Pet Services & Boarding</button></li>
+                    <li><button onclick="setActiveNav('veterinary')" class="hover:text-amber-400 transition">Veterinary Healthcare</button></li>
+                    <li><button onclick="setActiveNav('about')" class="hover:text-amber-400 transition">About Us & Owner Advice</button></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-bold text-white text-sm uppercase tracking-wider mb-4 border-b border-slate-800 pb-2">Clinic Hours</h4>
+                <ul class="space-y-2 text-xs text-slate-400">
+                    <li class="flex justify-between"><span>Monday - Friday:</span> <span class="text-white font-semibold">08:00 AM - 08:00 PM</span></li>
+                    <li class="flex justify-between"><span>Saturday:</span> <span class="text-white font-semibold">09:00 AM - 06:00 PM</span></li>
+                    <li class="flex justify-between"><span>Sunday (Emergency):</span> <span class="text-amber-400 font-semibold">10:00 AM - 04:00 PM</span></li>
+                    <li class="mt-3 text-[11px] text-slate-500">24/7 On-Call Emergency Veterinary Hotline Available</li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-bold text-white text-sm uppercase tracking-wider mb-4 border-b border-slate-800 pb-2">Newsletter</h4>
+                <p class="text-xs text-slate-400 mb-3">Subscribe for health tips, diet plans, and pet care discounts.</p>
+                <form onsubmit="handleFormSubmit(event, 'Thank you for subscribing to our newsletter!')" class="space-y-2">
+                    <input type="email" required placeholder="Enter email address" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-brandPurple">
+                    <button type="submit" class="w-full bg-brandPurple hover:bg-brandPurpleHover text-white text-xs font-bold py-2 rounded-lg transition shadow">Subscribe Now</button>
+                </form>
+            </div>
+        </div>
+        <div class="border-t border-slate-800/80 text-center py-4 text-xs text-slate-500">
+            &copy; 2026 POKET VET & PET SHOP. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- FLOATING CART BUTTON -->
+    <button onclick="toggleCart()" class="fixed bottom-6 right-6 bg-brandPurple hover:bg-brandPurpleHover text-white p-4 rounded-full shadow-2xl transition-all transform hover:scale-105 flex items-center justify-center z-40">
+        <i class="fa-solid fa-basket-shopping text-2xl"></i>
+        <span id="cartCountBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center border-2 border-white shadow">0</span>
+    </button>
+
+    <!-- CART SLIDE-OVER OVERLAY -->
+    <div id="cartModal" class="fixed inset-0 bg-slate-900/50 z-50 hidden transition-opacity duration-300">
+        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
+            <div class="w-screen max-w-md bg-white shadow-xl flex flex-col justify-between">
+                <!-- Cart Header -->
+                <div class="p-4 bg-brandNavy text-white flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-basket-shopping text-lg text-amber-400"></i>
+                        <h3 class="font-bold text-lg">Your Shopping Basket</h3>
+                    </div>
+                    <button onclick="toggleCart()" class="text-slate-300 hover:text-white p-1">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Cart Items List -->
+                <div id="cartItemsContainer" class="p-4 flex-1 overflow-y-auto space-y-4">
+                    <!-- Cart Items HTML -->
+                </div>
+
+                <!-- Cart Footer & Checkout -->
+                <div class="p-4 border-t border-slate-200 bg-slate-50">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-slate-600 font-medium">Total Amount:</span>
+                        <span id="cartTotal" class="text-2xl font-extrabold text-brandPurple">₹0.00</span>
+                    </div>
+                    <button onclick="proceedToCheckout()" class="w-full bg-brandPurple hover:bg-brandPurpleHover text-white py-3 rounded-xl font-bold shadow-md transition flex justify-center items-center space-x-2">
+                        <span>Proceed to Checkout</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CONTAINER (GENERIC) -->
+    <!-- LOGIN MODAL -->
+    <div id="loginModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+            <button onclick="closeModal('loginModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="bg-brandGold text-amber-950 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2 font-bold text-xl">
+                    <i class="fa-solid fa-paw"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800">Welcome Back</h3>
+                <p class="text-slate-500 text-sm">Login to access your Poket Vet account</p>
+            </div>
+            <form onsubmit="handleFormSubmit(event, 'Login successful!')" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Email Address</label>
+                    <input type="email" required placeholder="name@example.com" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brandPurple focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Password</label>
+                    <input type="password" required placeholder="••••••••" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brandPurple focus:outline-none">
+                </div>
+                <button type="submit" class="w-full bg-brandPurple hover:bg-brandPurpleHover text-white font-bold py-2.5 rounded-lg transition shadow">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- REGISTER MODAL -->
+    <div id="registerModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+            <button onclick="closeModal('registerModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div class="text-center mb-6">
+                <h3 class="text-xl font-bold text-slate-800">Create Account</h3>
+                <p class="text-slate-500 text-sm">Join Poket Vet & Pet Shop Community</p>
+            </div>
+            <form onsubmit="handleFormSubmit(event, 'Registration successful!')" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Full Name</label>
+                    <input type="text" required placeholder="John Doe" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brandPurple focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Email Address</label>
+                    <input type="email" required placeholder="name@example.com" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brandPurple focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Password</label>
+                    <input type="password" required placeholder="••••••••" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brandPurple focus:outline-none">
+                </div>
+                <button type="submit" class="w-full bg-brandPurple hover:bg-brandPurpleHover text-white font-bold py-2.5 rounded-lg transition shadow">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADMIN PANEL MODAL -->
+    <div id="adminModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl relative">
+            <button onclick="closeModal('adminModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="bg-brandNavy text-amber-400 p-2.5 rounded-lg">
+                    <i class="fa-solid fa-sliders text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Admin Control Center</h3>
+                    <p class="text-slate-500 text-xs">Inventory Overview & Quick Actions</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4 mb-6">
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+                    <span class="block text-2xl font-black text-brandPurple">12</span>
+                    <span class="text-xs font-semibold text-slate-500 uppercase">Total Items</span>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+                    <span class="block text-2xl font-black text-emerald-600">8</span>
+                    <span class="text-xs font-semibold text-slate-500 uppercase">Products</span>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+                    <span class="block text-2xl font-black text-indigo-600">4</span>
+                    <span class="text-xs font-semibold text-slate-500 uppercase">Services</span>
+                </div>
+            </div>
+
+            <h4 class="font-bold text-sm text-slate-700 mb-3">Add Quick Product/Service</h4>
+            <form onsubmit="handleFormSubmit(event, 'New item added successfully to catalog!')" class="space-y-3">
+                <div class="grid grid-cols-2 gap-3">
+                    <input type="text" placeholder="Item Name" required class="border border-slate-300 rounded-lg p-2 text-sm">
+                    <input type="number" placeholder="Price (₹)" required class="border border-slate-300 rounded-lg p-2 text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <select class="border border-slate-300 rounded-lg p-2 text-sm">
+                        <option value="product">PRODUCT</option>
+                        <option value="service">SERVICE</option>
+                    </select>
+                    <input type="text" placeholder="Stock Units" required class="border border-slate-300 rounded-lg p-2 text-sm">
+                </div>
+                <button type="submit" class="w-full bg-brandNavy text-white font-semibold py-2.5 rounded-lg text-sm hover:bg-slate-800 transition">Save & Publish</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION TOAST -->
+    <div id="toast" class="fixed top-5 right-5 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl z-50 flex items-center space-x-3 transform translate-y-[-150%] opacity-0 transition-all duration-300">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-lg" id="toastIcon"></i>
+        <span id="toastMessage" class="text-sm font-medium">Notification message</span>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // EXPANDED CATALOG DATABASES
+        const catalogData = [
+            // CATS
+            {
+                id: 'cat-01',
+                title: 'Me-O Cat Food Adult (1kg)',
+                type: 'product',
+                category: 'Food',
+                sku: 'CAT-FOOD-01',
+                stock: 25,
+                price: 350.00,
+                image: 'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?auto=format&fit=crop&w=600&q=80',
+                actionText: 'Add to Cart'
+            },
+            {
+                id: 'cat-02',
+                title: 'Persian Kitten (White Fluff)',
+                type: 'product',
+                category: 'Cats',
+                sku: 'CAT-PERSIAN-02',
+                stock: 3,
+                price: 12500.00,
+                image: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?auto=format&fit=crop&w=600&q=80',
+                actionText: 'Add to Cart'
+            },
+            {
+                id: 'cat-03',
+                title: 'Siamese Cat Breed',
+                type: 'product',
+                category: 'Cats',
+                sku: 'CAT-SIAMESE-03',
+                stock: 2,
+                price: 15000.00,
+                image: 'https://images.unsplash.com/photo-1513245543132-31f507417b26?auto=format&fit=crop&w=600&q=80',
+                actionText: 'Add to Cart'
+            },
+            {
+                id: 'cat-04',
+                title: 'Multi-Level Scratching Tree Post',
+                type: 'product',
+                category: 'Accessories',
+                sku: 'ACC-CAT-TREE',
+                stock: 12,
+                price: 1450.00,
+                image: 'https://images.unsplash.com/photo-1545249390-6bdfa286032f?auto=format&fit=crop&w=600&q=80',
+                actionText: 'Add to Cart'
+            },
+
+            // DOGS
+            {
+                id: 'dog-01',
+                title: 'Interactive Rubber Dog Chew Toy',
+                type: 'product',
+                category: 'Dogs',
+                sku: 'DOG-TOY-02',
+                stock: 10,
+                price: 499.00,
+                image: 'https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&w=600&q=80',
+                actionText: 'Add to Cart'
+            },
+            {
+                id: 'dog-02',
+                title: 'Golden Retriever Puppy',
+                type: 'product',
+                category: 'Dogs',
+                sku: 'DOG-GOLDEN-03',
+                stock: 4,
+                price: 18000.00,
+                image: 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=600&q=80',
+                actionText: 'Add to Cart'
+            },
+            {
+                id: 'dog-03',
+                title: 'German Shepherd Puppy',
+                type: 'product',
+                category: 'Dogs',
+                sku: 'DOG-GSD-04',
+                stock: 3,
+                price: 21000.00,
+                image: 'https://images.unsplash.com/photo-1589941013453-ec89f33b5e95?auto=format&fit=crop&w=600&q=80',
+                actionText: 'Add to Cart'
+            },
+            {
+                id: 'dog-04',
+                title: 'Royal Canin Adult Dog Nutrition 3kg',
+                type: 'product',
+                category: 'Food',
+                sku: 'DOG-FOOD-07',
+                stock: 18,
+                price: 1850.00,
+                image: 'https://images.unsplash.com/photo-1568640347023-a616a30bc3bd?auto=format&fit=crop&w=600&q=80',
+                actionText: 'Add to Cart'
+            },
+
+            // BIRDS
+            {
+                id: 'bird-01',
+                title: 'Finches (Pair)',
+                type: 'product',
+                category: 'Birds',
+                sku: 'BIRD-01',
+                stock: 20,
+                price: 800.00,
+                image: 'https://images.unsplash.com/photo-1522858547137-f1dcec554f55?auto=format&fit=crop&w=600&q=80',
+                actionText: 'Add to Cart'
+            },
+            {
+                id: 'bird-02',
+                title: 'Cockatiel Bird Pair',
+                type: 'product',
+                category: 'Birds',
+                sku: 'BIRD-COCKAT-02',
+                stock: 6,
+                price: 3200.00,
+                image: 'https://images.unsplash.com/photo-1552728089-57bdde30beb3?auto=format&fit=crop&w=600&q=80',
+                actionText: 'Add to Cart'
+            },
+            {
+                id: 'bird-03',
+                title: 'Nutritious Mixed Bird Seed Blend 1kg',
+                type: 'product',
+                category: 'Food',
+                sku: 'BIRD-FOOD-03',
+                stock: 30,
+                price: 290.00,
+                image: 'https://images.unsplash.com/photo-1606567595334-d39972c85dbe?auto=format&fit=crop&w=600&q=80',
+                actionText: 'Add to Cart'
+            },
+
+            // AQUARIUM
+            {
+                id: 'aquarium-01',
+                title: 'Complete Tropical Fish Aquarium Kit',
+                type: 'product',
+                category: 'Aquarium',
+                sku: 'AQUA-KIT-05',
+                stock: 8,
+                price: 2499.00,
+                image: 'https://images.unsplash.com/photo-1520301255226-bf5f144451c1?auto=format&fit=crop&w=600&q=80',
+                actionText: 'Add to Cart'
+            },
+            {
+                id: 'aquarium-02',
+                title: 'Bright Color Betta Fish',
+                type: 'product',
+                category: 'Aquarium',
+                sku: 'AQUA-BETTA-02',
+                stock: 15,
+                price: 350.00,
+                image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?auto=format&fit=crop&w=600&q=80',
+                actionText: 'Add to Cart'
+            },
+
+            // SERVICES & VET
+            {
+                id: 'vet-01',
+                title: 'Pet Grooming & Care Session',
+                type: 'service',
+                category: 'Care',
+                sku: 'VET-CARE-03',
+                stock: 10,
+                price: 899.00,
+                image: 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?auto=format&fit=crop&w=600&q=80',
+                actionText: 'Book Now'
+            },
+            {
+                id: 'vet-02',
+                title: 'General Vet Consultation & Checkup',
+                type: 'service',
+                category: 'Treatment',
+                sku: 'VET-MED-06',
+                stock: 15,
+                price: 600.00,
+                image: 'https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?auto=format&fit=crop&w=600&q=80',
+                actionText: 'Book Now'
+            },
+            {
+                id: 'care-02',
+                title: 'Pet Boarding & Shelter (Per Day)',
+                type: 'service',
+                category: 'Shelter',
+                sku: 'SHELTER-08',
+                stock: 5,
+                price: 1200.00,
+                image: 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&w=600&q=80',
+                actionText: 'Book Now'
+            },
+            {
+                id: 'vet-03',
+                title: 'Certified Breed Matting & Counseling',
+                type: 'service',
+                category: 'Breeding',
+                sku: 'BREED-COUNSEL-09',
+                stock: 8,
+                price: 1500.00,
+                image: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=600&q=80',
+                actionText: 'Book Now'
+            }
+        ];
+
+        // ALL CATEGORY PILLS MASTER
+        const allCategories = [
+            { name: 'Cats', icon: 'fa-solid fa-cat', type: 'shop' },
+            { name: 'Dogs', icon: 'fa-solid fa-dog', type: 'shop' },
+            { name: 'Birds', icon: 'fa-solid fa-crow', type: 'shop' },
+            { name: 'Aquarium', icon: 'fa-solid fa-fish', type: 'shop' },
+            { name: 'Food', icon: 'fa-solid fa-bowl-food', type: 'shop' },
+            { name: 'Accessories', icon: 'fa-solid fa-bone', type: 'shop' },
+            { name: 'Breeding', icon: 'fa-solid fa-heart', type: 'services' },
+            { name: 'Care', icon: 'fa-solid fa-spray-can', type: 'veterinary' },
+            { name: 'Treatment', icon: 'fa-solid fa-kit-medical', type: 'veterinary' },
+            { name: 'Shelter', icon: 'fa-solid fa-shield-cat', type: 'services' }
+        ];
+
+        // APP STATE
+        let activeNav = 'home'; // home | shop | services | veterinary | about
+        let activeCategory = 'All';
+        let activeSubFilter = 'all'; // all | service | product
+        let searchQuery = '';
+        let cart = [];
+
+        // INITIALIZATION
+        window.onload = function() {
+            setActiveNav('home');
+        };
+
+        // NAV ROUTING LOGIC
+        function setActiveNav(navId) {
+            activeNav = navId;
+
+            // Highlight Active Navbar Tab
+            ['home', 'shop', 'services', 'veterinary', 'about'].forEach(id => {
+                const el = document.getElementById(`nav-${id}`);
+                if (id === navId) {
+                    el.className = 'flex items-center space-x-2 bg-amber-900/40 text-amber-300 px-3 py-1.5 rounded-md font-semibold transition';
+                } else {
+                    el.className = 'flex items-center space-x-2 text-slate-300 hover:text-white px-3 py-1.5 rounded-md transition';
+                }
+            });
+
+            const shopView = document.getElementById('shopView');
+            const aboutView = document.getElementById('aboutView');
+
+            if (navId === 'about') {
+                shopView.classList.add('hidden');
+                aboutView.classList.remove('hidden');
+                return;
+            }
+
+            shopView.classList.remove('hidden');
+            aboutView.classList.add('hidden');
+
+            // Apply tab specific rules
+            if (navId === 'shop') {
+                activeSubFilter = 'product';
+                activeCategory = 'All';
+                document.getElementById('sectionTitle').innerText = 'Pet Shop Essentials';
+                document.getElementById('sectionSubtitle').innerText = 'Explore food, accessories, birds, fish, cats, and dogs.';
+            } else if (navId === 'services') {
+                activeSubFilter = 'service';
+                activeCategory = 'All';
+                document.getElementById('sectionTitle').innerText = 'Pet Care & Services';
+                document.getElementById('sectionSubtitle').innerText = 'Breeding assistance, care programs, and shelter boarding.';
+            } else if (navId === 'veterinary') {
+                activeSubFilter = 'all';
+                activeCategory = 'All';
+                document.getElementById('sectionTitle').innerText = 'Veterinary Healthcare';
+                document.getElementById('sectionSubtitle').innerText = 'Medical checkups, treatments, and grooming care.';
+            } else {
+                // Home
+                activeSubFilter = 'all';
+                activeCategory = 'All';
+                document.getElementById('sectionTitle').innerText = 'All Categories';
+                document.getElementById('sectionSubtitle').innerText = 'Browse our services, veterinary care, and pet shop essentials.';
+            }
+
+            updateSubFilterButtonsUI();
+            renderCategoryBadges();
+            renderCards();
+        }
+
+        // RENDER DYNAMIC CATEGORY BADGES BASED ON CURRENT NAV TAB
+        function renderCategoryBadges() {
+            const container1 = document.getElementById('categoryGrid');
+            const container2 = document.getElementById('categoryGridRow2');
+
+            let visibleCategories = [];
+
+            if (activeNav === 'home') {
+                visibleCategories = [{ name: 'Home', icon: 'fa-solid fa-house' }, ...allCategories];
+            } else if (activeNav === 'shop') {
+                visibleCategories = allCategories.filter(c => ['Food', 'Accessories', 'Aquarium', 'Cats', 'Dogs', 'Birds'].includes(c.name));
+            } else if (activeNav === 'services') {
+                visibleCategories = allCategories.filter(c => ['Breeding', 'Care', 'Shelter'].includes(c.name));
+            } else if (activeNav === 'veterinary') {
+                visibleCategories = allCategories.filter(c => ['Care', 'Treatment'].includes(c.name));
+            }
+
+            // Divide between row 1 & row 2 cleanly
+            const row1 = visibleCategories.slice(0, 7);
+            const row2 = visibleCategories.slice(7);
+
+            container1.innerHTML = row1.map(cat => createCategoryPill(cat.name, cat.icon)).join('');
+            container2.innerHTML = row2.map(cat => createCategoryPill(cat.name, cat.icon)).join('');
+        }
+
+        function createCategoryPill(name, icon) {
+            const isSelected = activeCategory === name || (name === 'Home' && activeCategory === 'All');
+            const bgStyle = isSelected 
+                ? 'bg-brandPurple text-white shadow-md shadow-purple-200 scale-105' 
+                : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/60';
+            
+            const iconBg = isSelected 
+                ? 'bg-white/20 text-white' 
+                : 'bg-slate-200/70 text-slate-600';
+
+            return `
+                <button onclick="selectCategory('${name}')" class="flex items-center space-x-2.5 p-2.5 rounded-xl transition-all duration-200 font-semibold text-sm ${bgStyle}">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm ${iconBg}">
+                        <i class="${icon}"></i>
+                    </div>
+                    <span>${name}</span>
+                </button>
+            `;
+        }
+
+        function selectCategory(categoryName) {
+            if (categoryName === 'Home') {
+                activeCategory = 'All';
+            } else {
+                activeCategory = categoryName;
+            }
+            renderCategoryBadges();
+            renderCards();
+        }
+
+        function setSubFilter(filterType) {
+            activeSubFilter = filterType;
+            updateSubFilterButtonsUI();
+            renderCards();
+        }
+
+        function updateSubFilterButtonsUI() {
+            ['all', 'service', 'product'].forEach(type => {
+                const btn = document.getElementById(`sub-${type}`);
+                if (type === activeSubFilter) {
+                    btn.className = 'px-4 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition bg-brandPurple text-white shadow-sm';
+                } else {
+                    btn.className = 'px-4 py-1.5 text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 rounded-lg transition';
+                }
+            });
+        }
+
+        function handleSearch() {
+            searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
+            if (activeNav === 'about') {
+                setActiveNav('home');
+            }
+            renderCards();
+        }
+
+        function resetFilters() {
+            setActiveNav('home');
+            searchQuery = '';
+            document.getElementById('searchInput').value = '';
+        }
+
+        // RENDER CARDS LOGIC
+        function renderCards() {
+            const grid = document.getElementById('itemsGrid');
+            const emptyState = document.getElementById('emptyState');
+
+            const filteredItems = catalogData.filter(item => {
+                // Category Filter
+                const matchesCategory = (activeCategory === 'All') || (item.category === activeCategory);
+                
+                // Sub Filter (All, Services, Products)
+                const matchesSubFilter = (activeSubFilter === 'all') || (item.type === activeSubFilter);
+
+                // Tab Scope Filter
+                let matchesTabScope = true;
+                if (activeNav === 'shop') {
+                    matchesTabScope = ['Food', 'Accessories', 'Aquarium', 'Cats', 'Dogs', 'Birds'].includes(item.category);
+                } else if (activeNav === 'services') {
+                    matchesTabScope = ['Breeding', 'Care', 'Shelter'].includes(item.category);
+                } else if (activeNav === 'veterinary') {
+                    matchesTabScope = ['Care', 'Treatment'].includes(item.category);
+                }
+
+                // Search Filter
+                const matchesSearch = !searchQuery || 
+                    item.title.toLowerCase().includes(searchQuery) ||
+                    item.sku.toLowerCase().includes(searchQuery) ||
+                    item.category.toLowerCase().includes(searchQuery);
+
+                return matchesCategory && matchesSubFilter && matchesTabScope && matchesSearch;
+            });
+
+            if (filteredItems.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            grid.innerHTML = filteredItems.map(item => {
+                const isProduct = item.type === 'product';
+                const badgeBg = isProduct ? 'bg-emerald-100 text-emerald-800' : 'bg-indigo-100 text-indigo-800';
+
+                return `
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md border border-slate-200/80 flex flex-col justify-between transition-all duration-200">
+                        <div class="h-48 w-full bg-slate-100 relative overflow-hidden">
+                            <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/600x400/e2e8f0/475569?text=Poket+Vet+Item'">
+                        </div>
+                        <div class="p-4 flex-1 flex flex-col justify-between">
+                            <div>
+                                <span class="inline-block text-[10px] font-extrabold px-2.5 py-0.5 rounded-md uppercase tracking-wider mb-2 ${badgeBg}">
+                                    ${item.type}
+                                </span>
+                                <h3 class="font-bold text-slate-800 text-base leading-snug mb-1 line-clamp-1">${item.title}</h3>
+                                <p class="text-xs text-slate-400 font-medium mb-4">SKU: ${item.sku} | In Stock: ${item.stock} units</p>
+                            </div>
+                            <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                                <span class="text-lg font-extrabold text-brandPurple">₹${item.price.toFixed(2)}</span>
+                                <button onclick="addToCart('${item.id}')" class="bg-brandPurple hover:bg-brandPurpleHover text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-sm flex items-center space-x-1.5">
+                                    <span>${item.actionText}</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // CART LOGIC
+        function addToCart(itemId) {
+            const item = catalogData.find(i => i.id === itemId);
+            if (!item) return;
+
+            const existing = cart.find(c => c.id === itemId);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                cart.push({ ...item, quantity: 1 });
+            }
+
+            updateCartUI();
+            showToast(`Added "${item.title}" to basket!`);
+        }
+
+        function updateCartQuantity(itemId, delta) {
+            const index = cart.findIndex(c => c.id === itemId);
+            if (index !== -1) {
+                cart[index].quantity += delta;
+                if (cart[index].quantity <= 0) {
+                    cart.splice(index, 1);
+                }
+            }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const badge = document.getElementById('cartCountBadge');
+            const container = document.getElementById('cartItemsContainer');
+            const totalEl = document.getElementById('cartTotal');
+
+            const totalCount = cart.reduce((sum, i) => sum + i.quantity, 0);
+            const totalPrice = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+
+            badge.innerText = totalCount;
+            totalEl.innerText = `₹${totalPrice.toFixed(2)}`;
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-slate-400">
+                        <i class="fa-solid fa-basket-shopping text-4xl mb-2 opacity-40"></i>
+                        <p class="text-sm font-medium">Your shopping basket is empty</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = cart.map(item => `
+                <div class="flex items-center space-x-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                    <img src="${item.image}" class="w-14 h-14 rounded-lg object-cover" onerror="this.src='https://placehold.co/100x100?text=Pet'">
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-bold text-xs text-slate-800 truncate">${item.title}</h4>
+                        <span class="text-xs text-brandPurple font-extrabold">₹${(item.price * item.quantity).toFixed(2)}</span>
+                    </div>
+                    <div class="flex items-center space-x-2 bg-white px-2 py-1 rounded-lg border border-slate-200">
+                        <button onclick="updateCartQuantity('${item.id}', -1)" class="text-slate-500 hover:text-slate-800 text-xs font-bold px-1">-</button>
+                        <span class="text-xs font-bold text-slate-700">${item.quantity}</span>
+                        <button onclick="updateCartQuantity('${item.id}', 1)" class="text-slate-500 hover:text-slate-800 text-xs font-bold px-1">+</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleCart() {
+            const modal = document.getElementById('cartModal');
+            modal.classList.toggle('hidden');
+        }
+
+        function proceedToCheckout() {
+            if (cart.length === 0) {
+                showToast('Your basket is empty!', 'error');
+                return;
+            }
+            showToast('Order / Booking placed successfully!');
+            cart = [];
+            updateCartUI();
+            toggleCart();
+        }
+
+        // MODAL HELPERS
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        function handleFormSubmit(e, message) {
+            e.preventDefault();
+            showToast(message);
+            const parentModal = e.target.closest('.fixed');
+            if (parentModal) parentModal.classList.add('hidden');
+            e.target.reset();
+        }
+
+        // TOAST NOTIFICATION
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.innerText = message;
+            if (type === 'error') {
+                toastIcon.className = 'fa-solid fa-circle-exclamation text-red-400 text-lg';
+            } else {
+                toastIcon.className = 'fa-solid fa-circle-check text-emerald-400 text-lg';
+            }
+
+            toast.classList.remove('translate-y-[-150%]', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-[-150%]', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
